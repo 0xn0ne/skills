@@ -33,7 +33,7 @@
 **Who is it for**:
 
 | Role | Typical scenario |
-|---|---|
+| --- | --- |
 | Decision-makers (CEO / PM / investor) | "Should we invest in X?" "Should we switch to vendor Y?" "Should we migrate off SaaS Z?" |
 | Strategy researchers | Cross-domain opportunity scans, platform strategy, investability analyses |
 | Tech leads | Vendor selection, architecture trade-offs, technical debt assessment |
@@ -62,14 +62,6 @@
 ```bash
 # Method A · project-level (recommended) — team shares one version
 git clone <skill-repo> ~/.config/opencode/skills/deep-research
-# or:
-cp -r .opencode/skills/deep-research/ ~/.config/opencode/skills/
-
-# Method B · user-level — symlink to user skills dir
-ln -s "$(pwd)/.opencode/skills/deep-research" \
-      ~/.config/opencode/skills/deep-research
-
-# Method C · plugin marketplace — for Claude Code / Cursor, search "deep-research" in marketplace
 ```
 
 ### Minimal agent prompt template
@@ -81,8 +73,7 @@ Research topic: [user's open-ended question]
 
 Requirement: Produce a decision-grade deep research report.
 
-Load this SKILL (absolute path):
-/Users/bing/opencode-works/research-skill/.opencode/skills/deep-research/SKILL.md
+Load this SKILL (absolute path): `.opencode/skills/deep-research/SKILL.md`
 
 Follow the rules in SKILL.md strictly.
 ```
@@ -96,7 +87,7 @@ Research topic: Should Apple replace OpenAI partnership with self-developed LLM 
 
 Requirement: Produce a decision-grade deep research report.
 
-Load this SKILL: /Users/bing/opencode-works/research-skill/.opencode/skills/deep-research/SKILL.md
+Load this SKILL: `.opencode/skills/deep-research/SKILL.md`
 ```
 
 ### Expected output
@@ -127,7 +118,7 @@ Output 3: terminal print — explicit decision (**YES** / **NO** / **DEFER**) + 
 Report audience determines output format naturally:
 
 | Audience | Executive Summary focus | Section weights | Digit density |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **Decision-makers** (CEO / board) | one-line verdict + boundaries + owners | Conclusions heaviest | ≥ 60 digits |
 | **Practitioners** (PM / eng) | hypotheses + counter + rollout steps | Findings + Risks heavy | ≥ 40 digits |
 | **Researchers / analysts** | methodology + evidence chain + data | Methodology + Sources heavy | ≥ 30 digits |
@@ -157,7 +148,7 @@ Report audience determines output format naturally:
 **9 probe types**:
 
 | Probe | Purpose | Example |
-|---|---|---|
+| --- | --- | --- |
 | P1 scope | clarify boundaries & dimensions | "Industry mainstream categories, core metrics?" |
 | P2 primary | anchor key facts/numbers | "What do official data / financials / regulators say?" |
 | P3 comparison | find differences / benchmarks | "A vs B on price / performance / risk?" |
@@ -179,7 +170,7 @@ Report audience determines output format naturally:
 **Satisficing 4-C stop gate** (any one = stop):
 
 | # | Condition | Tool check |
-|---|---|---|
+| --- | --- | --- |
 | S1 | Task card criteria checklist all checked | agent review |
 | S2 | Major disagreements resolved or explicitly unresolved | agent review |
 | S3 | High-credibility counter found → hypothesis to 无效 (KILLED) | agent review |
@@ -201,6 +192,7 @@ Report audience determines output format naturally:
 ```
 
 Audit item 8 failure handling (choose 1):
+
 - **Backfill ledger** (recommended) — re-run claim/round/hyp to populate, then write
 - **DELAY** — tell user "tool calls failed, will give brief reply, full report later"
 - **Disclose report** — end with `本报告数据来自 in-context 推理,仅供参考` disclosure
@@ -214,7 +206,7 @@ Audit item 8 failure handling (choose 1):
 ### Input contract
 
 | Field | Required | Notes |
-|---|---|---|
+| --- | --- | --- |
 | `topic` | yes | Open question (not a "what is X" single-point query) |
 | `Effort hint` | no | L1/L2/L3 — agent auto-selects based on task |
 | `Audience preference` | no | Default = decision-maker (changeable in Frame) |
@@ -264,7 +256,7 @@ research/
 ## Before / After: why this skill
 
 | Dimension | Without this skill (raw LLM) | With this skill |
-|---|---|---|
+| --- | --- | --- |
 | Report structure | 5-7 paragraph stream, no chapter discipline | 5-chapter forced structure + verification gate |
 | Evidence chain | 5-10 cited sources, no grading | T1-T5 grading + 4 cognitive labels |
 | Decision traceability | No claim-to-recommendation anchors | Every recommendation anchored to C#/S# in ledger |
@@ -282,7 +274,7 @@ research/
 ### ❌ Don't use for
 
 | Scenario | Why | Alternative |
-|---|---|---|
+| --- | --- | --- |
 | Single-fact queries | "What's new in Python 3.13" needs no 6-lens | `web_search` direct |
 | Real-time code debugging | LLM context doesn't preserve build state | IDE direct |
 | Creative writing / fiction | No decision goal, evidence tracing is meaningless | Direct dialogue |
@@ -291,7 +283,7 @@ research/
 ### ❌ Don't do this (Anti-patterns)
 
 | Anti-pattern | Why bad |
-|---|---|
+| --- | --- |
 | ✗ Retelling SKILL content in agent prompt | Pollutes test, occludes SKILL value |
 | ✗ Use L1/L2/L3 simultaneously for effort AND audience | Dimensional collapse — keep 3 dimensions independent (per #244) |
 | ✗ Report headers using topic form ("Suggestions / Analysis / Conclusions") | Must use conclusion-embedded ("Recommend rust migration") (per #227) |
@@ -317,6 +309,7 @@ research/
 ### 1. Decision-ready: explicit verdict + boundaries
 
 Every report MUST:
+
 - State **YES / NO / DEFER** explicitly (decision lens mandatory)
 - List ≥ 1 **Hold** condition (when to re-assess / escalate)
 - List ≥ 1 **Revert** condition (when to reverse / cancel)
@@ -353,6 +346,7 @@ Readers apply "trust demotion" — decisions can rely on [已确认 + Primary], 
 ### 4. ACH competing hypotheses upfront (anti confirmation-bias)
 
 **Before** starting the report, list ≥ 2 **mutually-exclusive** hypotheses; grade all evidence by **diagnosticity**:
+
 - **High-diagnosticity evidence** = supports only one hypothesis → can falsify others
 - **Low-diagnosticity evidence** = supports multiple → background only
 
@@ -379,7 +373,7 @@ Independence principle is one of SOUL.md 1st-tier anchors.
 ## Troubleshooting
 
 | Symptom | Cause | Fix |
-|---|---|---|
+| --- | --- | --- |
 | Agent still uses old skill version after load | OpenCode caches SKILL in memory | Copy SKILL.md full content into prompt (temporary) / restart agent |
 | audit shows `0/7` | Setup called but no claim/round actually invoked | Re-run each subcommand, verify "OK" line output |
 | `[Sn]` references not detected by inline metadata | Sources Register not at document end | Add Sources section to markdown bottom (independent `## Sources` header) |
@@ -416,7 +410,7 @@ python3 <skill>/scripts/research_tools.py audit
 **v9.0** (structural refactor)
 
 | Dimension | Status |
-|---|---|
+| --- | --- |
 | References | 3 (probe-search / hypothesis-redteam / report-rendering) |
 | Tools subcommands | 15 (setup / source / round / finding / hyp [--id] / decide / summary / list / claim / claims-dump / suggest-label / check-stop / suggest-path / inline / audit) |
 | Self-check items | 8 (SKILL.md §7, single authority) |
@@ -448,7 +442,7 @@ Full per-version detail in `CHANGELOG.md`; R1-R17 regression history in `tests/r
 ### Citations & acknowledgments
 
 | Source | Use |
-|---|---|
+| --- | --- |
 | [Anthropic Skills spec](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview) | skill frontmatter / description / body structure |
 | [Best-README-Template](https://github.com/othneildrew/Best-README-Template) | README section conventions |
 | [Raymond-Hear/deep-research-prompt](https://github.com/Raymond-Hear/deep-research-prompt) | value bullet pattern / Before-After table |
@@ -458,7 +452,7 @@ Full per-version detail in `CHANGELOG.md`; R1-R17 regression history in `tests/r
 ### Theoretical foundations
 
 | Theory | Application |
-|---|---|
+| --- | --- |
 | [Minto Pyramid Principle](https://barbaraminto.com/) (McKinsey / BCG / Bain) | bottom-line-up / pyramid structure |
 | [Gopen & Swan 1990](https://www.americanscientist.org/blog/the-long-view/the-science-of-scientific-writing) | sentence-level 7 principles |
 | [IMRaD](https://en.wikipedia.org/wiki/IMRaD) | academic / business report template |
@@ -472,7 +466,7 @@ Full per-version detail in `CHANGELOG.md`; R1-R17 regression history in `tests/r
 ### Tools & scripts
 
 | Tool | Use |
-|---|---|
+| --- | --- |
 | `python3 scripts/research_tools.py setup` | Initialize ledger |
 | `python3 scripts/research_tools.py claim` | Record cognitive-labeled claim |
 | `python3 scripts/research_tools.py hyp 有效` | Update hypothesis state (中文) |

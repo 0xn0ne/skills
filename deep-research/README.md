@@ -33,7 +33,7 @@
 **适合谁**:
 
 | 角色 | 典型场景 |
-|---|---|
+| --- | --- |
 | 决策者(CEO/PM/投资人) | "该不该投 X 公司?" "该不该换供应商 Y?" "该从 SaaS Z 迁到自建吗?" |
 | 战略研究员 | 跨域机会扫描、平台战略、可投资性分析 |
 | 技术负责人 | 选型决策、架构 trade-off、技术债务评估 |
@@ -62,15 +62,6 @@
 ```bash
 # 方式 A · 项目级(推荐)— 团队共享同一版本
 git clone <skill-repo> ~/.config/opencode/skills/deep-research
-# 或:
-cp -r .opencode/skills/deep-research/ ~/.config/opencode/skills/
-
-# 方式 B · 用户级 — 装到 ~/.config/opencode/skills/,所有项目都能用
-ln -s "$(pwd)/.opencode/skills/deep-research" \
-      ~/.config/opencode/skills/deep-research
-
-# 方式 C · 平台插件市场 — 若你用 Claude Code / Cursor,
-# 在对应插件市场搜索 "deep-research" 一键安装
 ```
 
 ### 最小调用(给 Agent 的 prompt 模板)
@@ -82,8 +73,7 @@ ln -s "$(pwd)/.opencode/skills/deep-research" \
 
 要求:做一份决策级深度调研报告。
 
-加载的 SKILL 路径(绝对路径):
-/Users/bing/opencode-works/research-skill/.opencode/skills/deep-research/SKILL.md
+加载的 SKILL 路径(绝对路径): `.opencode/skills/deep-research/SKILL.md`
 
 严格按 SKILL.md 的规则执行。
 ```
@@ -97,7 +87,7 @@ ln -s "$(pwd)/.opencode/skills/deep-research" \
 
 要求:做一份决策级深度调研报告。
 
-加载 SKILL(必须):/Users/bing/opencode-works/research-skill/.opencode/skills/deep-research/SKILL.md
+加载 SKILL(必须): `.opencode/skills/deep-research/SKILL.md`
 ```
 
 ### 预期输出
@@ -128,7 +118,7 @@ ln -s "$(pwd)/.opencode/skills/deep-research" \
 报告给谁看 → 输出格式自然调整:
 
 | 受众 | Executive Summary 重点 | 章节权重 | 数字密度 |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **决策者(CEO/board)** | 一句话拍板 + 边界 + 责任人 | 结论最重 | ≥ 60 数字 |
 | **实务者(PM/eng)** | 假设 + 反方 + 实施步骤 | Findings + Risks 重 | ≥ 40 数字 |
 | **研究者 / 分析师** | 方法论 + 证据链 + 数据 | Methodology + Sources 重 | ≥ 30 数字 |
@@ -158,7 +148,7 @@ ln -s "$(pwd)/.opencode/skills/deep-research" \
 **9 类探针**:
 
 | Probe | 目的 | 典型问题 |
-|---|---|---|
+| --- | --- | --- |
 | P1 范围 | 明确问题边界和主要维度 | "这个领域的主流分类、核心指标是什么?" |
 | P2 一手 | 锚定关键事实和数字 | "官方数据、财报、监管文件怎么说?" |
 | P3 对比 | 找差异、优劣、benchmark | "A 与 B 在价格、性能、风险上差在哪?" |
@@ -180,7 +170,7 @@ ln -s "$(pwd)/.opencode/skills/deep-research" \
 **Satisficing 4-C 停止门**(任一即停):
 
 | # | 条件 | 工具检查 |
-|---|---|---|
+| --- | --- | --- |
 | S1 | 任务卡关键标准 checklist 全部勾选 | agent 评估 |
 | S2 | 主要分歧已解决或显式未决 | agent 评估 |
 | S3 | 高可信度反方出现 → 假设转 无效 | agent 评估 |
@@ -202,6 +192,7 @@ ln -s "$(pwd)/.opencode/skills/deep-research" \
 ```
 
 未通过第 8 项的处置(3 选 1):
+
 - **回填 ledger**(推荐)— 重跑 claim/round/hyp 补全数据,再写报告
 - **DELAY** 报告 — 告诉用户"工具调用未成功,先简要答复"
 - **改口报告** — 在末尾显式声明"本报告数据来自 in-context 推理,仅供参考"
@@ -215,7 +206,7 @@ ln -s "$(pwd)/.opencode/skills/deep-research" \
 ### 输入契约
 
 | 字段 | 必填 | 说明 |
-|---|---|---|
+| --- | --- | --- |
 | `topic` | ✓ | 研究主题(开放问题,不是"WebSocket 是什么"型单点查询) |
 | `工作量预期` | × | L1(快速)/ L2(标准)/ L3(复杂),agent 根据任务自动选 |
 | `受众偏好` | × | 默认 = 决策者(可在 Frame 阶段调整) |
@@ -265,7 +256,7 @@ research/
 ## Before / After:为什么用这个 Skill
 
 | 维度 | 不使用(裸 LLM) | 使用本 skill |
-|---|---|---|
+| --- | --- | --- |
 | 报告结构 | 5-7 段流水文,无章节 | 5 章节强制结构 + 验证 gate |
 | 证据链 | 引用源 5-10 个,不分级 | T1-T5 分级 + ≥ 标注 4 档认知标签 |
 | 决策可追溯 | 决策建议无 claim 引用 | 每个推荐都有 C#/S# 锚定到 ledger |
@@ -283,7 +274,7 @@ research/
 ### ❌ 不要用在
 
 | 场景 | 原因 | 替代方案 |
-|---|---|---|
+| --- | --- | --- |
 | 单点事实查询 | "Python 3.13 有什么新特性"无需 6-lens | `web_search` 即可 |
 | 实时代码调试 | LLM context 不会保存构建状态 | 直接 IDE |
 | 创意写作 / 故事创作 | 没有"决策"目标,事实溯源无意义 | 直接对话 |
@@ -292,7 +283,7 @@ research/
 ### ❌ 不要这么做(Anti-Patterns)
 
 | 反模式 | 为什么坏 |
-|---|---|
+| --- | --- |
 | ✗ 给 Agent prompt 时复述 SKILL 内容 | 污染测试,SKILL 价值被 prompt 遮挡 |
 | ✗ 用 L1/L2/L3 同时表达难度和受众 | 一维标签坍缩,3 维度独立(per #244) |
 | ✗ 报告章节按"建议 / 分析 / 结论" 主题型标题 | 必须用"结论:推荐 rust"嵌入式标题(per #227) |
@@ -318,6 +309,7 @@ research/
 ### 1. 可拍板:显式决策 + 边界
 
 每份报告必须:
+
 - 显式给出 **YES / NO / DEFER**(决策类 lens 强制)
 - 至少 1 条 **Hold 条件**(何时重新评估 / 升级动作)
 - 至少 1 条 **Revert 条件**(何时反向 / 撤销动作)
@@ -354,6 +346,7 @@ research/
 ### 4. ACH 竞争假设前置(防确认偏误)
 
 报告 **开始前** 先列 ≥ 2 个**互斥**假设,所有证据按"诊断性"分级:
+
 - **高诊断性证据** = 只支持某个假设,可证伪其他 → 用于 kill
 - **低诊断性证据** = 同时支持多个 → 仅作背景
 
@@ -380,7 +373,7 @@ research/
 ## 故障排查
 
 | 症状 | 原因 | 解决 |
-|---|---|---|
+| --- | --- | --- |
 | 加载 SKILL 后 agent 还是用旧版 | OpenCode 内存缓存 SKILL | 把 SKILL.md 的完整内容复制到 prompt(临时) / 重启 agent |
 | audit 失败 `0/7` | 调用 setup 没真调用过 claim/round | 重跑每个 subcommand,验证有 OK 输出 |
 | 报告找不到 `[Sn]` 引用 inline metadata | Sources Register 不在文档末尾 | 把 Sources 段加到 markdown 末尾(独立 `## Sources` 标题) |
@@ -417,12 +410,12 @@ python3 <skill>/scripts/research_tools.py audit
 **v9.0**(重构版)
 
 | 维度 | 状态 |
-|---|---|
+| --- | --- |
 | References | 3 个(probe-search / hypothesis-redteam / report-rendering) |
-| Tools subcommand | 15 个(setup / source / round / finding / hyp [--id] / decide / summary / list / claim / claims-dump / suggest-label / check-stop / suggest-path / inline / audit)|
-| Self-check items | 8 项(SKILL.md §7,唯一权威)|
-| 假设状态 | 中文 4 态(有效 / 修正 / 无效 / 待定)+ 三档置信(高/中/低),多假设(ACH)|
-| Ledger schema | 2.0(多假设 hypotheses[];兼容读旧 1.0)|
+| Tools subcommand | 15 个(setup / source / round / finding / hyp [--id] / decide / summary / list / claim / claims-dump / suggest-label / check-stop / suggest-path / inline / audit) |
+| Self-check items | 8 项(SKILL.md §7,唯一权威) |
+| 假设状态 | 中文 4 态(有效 / 修正 / 无效 / 待定)+ 三档置信(高/中/低),多假设(ACH) |
+| Ledger schema | 2.0(多假设 hypotheses[];兼容读旧 1.0) |
 | 工作量上限 | L1=20 / L2=50 / L3=80 搜索调用 |
 
 ### 升级策略
@@ -449,7 +442,7 @@ python3 <skill>/scripts/research_tools.py audit
 ### 引用与致谢
 
 | 来源 | 用途 |
-|---|---|
+| --- | --- |
 | [Anthropic Skills 规范](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview) | skill frontmatter / description / body 结构 |
 | [Best-README-Template](https://github.com/othneildrew/Best-README-Template) | README 章节规范 |
 | [Raymond-Hear/deep-research-prompt](https://github.com/Raymond-Hear/deep-research-prompt) | value bullet 写法 / Before-After 表 |
@@ -459,7 +452,7 @@ python3 <skill>/scripts/research_tools.py audit
 ### 学术依据
 
 | 理论 | 应用 |
-|---|---|
+| --- | --- |
 | [Minto Pyramid Principle](https://barbaraminto.com/)(McKinsey / BCG / Bain) | 结论先行 / 金字塔结构 |
 | [Gopen & Swan 1990](https://www.americanscientist.org/blog/the-long-view/the-science-of-scientific-writing) | 句级 7 原则 |
 | [IMRaD](https://en.wikipedia.org/wiki/IMRaD) | 学术 / 商业报告通用模板 |
@@ -468,12 +461,12 @@ python3 <skill>/scripts/research_tools.py audit
 | [Information Foraging Theory](https://en.wikipedia.org/wiki/Information_foraging)(Pirolli & Card) | 边际价值信号 |
 | [Satisficing / Herbert Simon 1956](https://en.wikipedia.org/wiki/Satisficing) | 满意即可原则 |
 | [ACH(Analysis of Competing Hypotheses)](https://en.wikipedia.org/wiki/Analysis_of_Competing_Hypotheses) | 美国情报竞争假设方法 |
-| [ICD 203](https://www.dni.gov/index.php/who-we-are/organizations/ic-reform-modernization-efforts/icd-203) | 美情报分析标准(Red Team 理论依据)|
+| [ICD 203](https://www.dni.gov/index.php/who-we-are/organizations/ic-reform-modernization-efforts/icd-203) | 美情报分析标准(Red Team 理论依据) |
 
 ### 工具与脚本
 
 | 工具 | 用途 |
-|---|---|
+| --- | --- |
 | `python3 scripts/research_tools.py setup` | 初始化 ledger |
 | `python3 scripts/research_tools.py claim` | 记录认知标签主张 |
 | `python3 scripts/research_tools.py hyp 有效` | 更新假设状态(中文) |
