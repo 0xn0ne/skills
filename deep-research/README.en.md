@@ -2,7 +2,7 @@
 
 > Turn vague "research X" into a boardroom-ready decision report. 3-phase method (Task Card → Probe Search → 6-lens Decision) + Satisficing 4-C stop gate + 9 research tools, producing a **YES**/**NO**/**DEFER** + boundary conditions + counter-position + executable report.
 
-[![version v9.0](https://img.shields.io/badge/version-v9.0-blue)](./SKILL.md) [![skill: deep-research](https://img.shields.io/badge/skill-deep--research-purple)](./SKILL.md) [![agent: opencode](https://img.shields.io/badge/agent-opencode-orange)](#) [![license: MIT](https://img.shields.io/badge/license-MIT-green)](#)
+[![version v9.0](https://img.shields.io/badge/version-v9.0-blue)](./SKILL.md) [![skill: deep-research](https://img.shields.io/badge/skill-deep--research-purple)](./SKILL.md) [![spec: Agent Skills](https://img.shields.io/badge/spec-Agent%20Skills-blue)](https://docs.claude.com/en/docs/agents-and-tools/agent-skills) [![license: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-green)](../LICENSE)
 
 [简体中文](./README.md) | English
 
@@ -57,11 +57,17 @@
 
 ## Quick start
 
-### Installation (3 ways)
+### Installation
 
 ```bash
-# Method A · project-level (recommended) — team shares one version
-git clone <skill-repo> ~/.config/opencode/skills/deep-research
+# Generic Agent Skills layout (one dir + SKILL.md with frontmatter) - not tied to any single agent
+git clone https://github.com/0xn0ne/skills.git
+cp -r skills/deep-research/ <your agent's skills dir>/
+
+# Common locations
+#   Claude Code: ~/.claude/skills/ (user)          | <project>/.claude/skills/ (project)
+#   OpenCode:    ~/.config/opencode/skills/ (user) | <project>/.opencode/skills/ (project)
+# No install needed either: just give the agent the absolute path to SKILL.md in your prompt
 ```
 
 ### Minimal agent prompt template
@@ -73,7 +79,7 @@ Research topic: [user's open-ended question]
 
 Requirement: Produce a decision-grade deep research report.
 
-Load this SKILL (absolute path): `.opencode/skills/deep-research/SKILL.md`
+Load this SKILL (absolute path): `<your skills dir>/deep-research/SKILL.md`
 
 Follow the rules in SKILL.md strictly.
 ```
@@ -87,7 +93,7 @@ Research topic: Should Apple replace OpenAI partnership with self-developed LLM 
 
 Requirement: Produce a decision-grade deep research report.
 
-Load this SKILL: `.opencode/skills/deep-research/SKILL.md`
+Load this SKILL: `<your skills dir>/deep-research/SKILL.md`
 ```
 
 ### Expected output
@@ -386,9 +392,9 @@ Independence principle is one of SOUL.md 1st-tier anchors.
 
 ```bash
 # Verify skill install is correct
-ls ~/.config/opencode/skills/deep-research/SKILL.md
-diff ~/.config/opencode/skills/deep-research/SKILL.md \
-     <project>/.opencode/skills/deep-research/SKILL.md
+ls <your skills dir>/deep-research/SKILL.md
+diff <user-level skills dir>/deep-research/SKILL.md \
+     <project-level skills dir>/deep-research/SKILL.md
 # Should output empty (byte-identical)
 
 # Verify tools work

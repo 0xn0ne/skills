@@ -2,7 +2,7 @@
 
 > 把模糊的"研究一下 X"变成可拍板的决策级报告。3 阶段方法(任务卡 → 探针搜索 → 6-lens 决策)+ Satisficing 4-C 停止门 + 9 项研究工具,产出 **WH**/**NO**/**DEFER** + 边界条件 + 反方立场的可执行报告。
 
-[![version v9.0](https://img.shields.io/badge/version-v9.0-blue)](./SKILL.md) [![skill: deep-research](https://img.shields.io/badge/skill-deep--research-purple)](./SKILL.md) [![agent: opencode](https://img.shields.io/badge/agent-opencode-orange)](#) [![license: MIT](https://img.shields.io/badge/license-MIT-green)](#)
+[![version v9.0](https://img.shields.io/badge/version-v9.0-blue)](./SKILL.md) [![skill: deep-research](https://img.shields.io/badge/skill-deep--research-purple)](./SKILL.md) [![spec: Agent Skills](https://img.shields.io/badge/spec-Agent%20Skills-blue)](https://docs.claude.com/en/docs/agents-and-tools/agent-skills) [![license: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-green)](../LICENSE)
 
 简体中文 | [English](./README.en.md)
 
@@ -57,11 +57,17 @@
 
 ## 快速开始
 
-### 安装(3 种方式)
+### 安装
 
 ```bash
-# 方式 A · 项目级(推荐)— 团队共享同一版本
-git clone <skill-repo> ~/.config/opencode/skills/deep-research
+# 通用 Agent Skills 布局(一个目录 + 一份带 frontmatter 的 SKILL.md),不绑定任何特定 agent
+git clone https://github.com/0xn0ne/skills.git
+cp -r skills/deep-research/ <你的 agent 的 skills 目录>/
+
+# 常见位置
+#   Claude Code: ~/.claude/skills/(用户级) | <project>/.claude/skills/(项目级)
+#   OpenCode:    ~/.config/opencode/skills/(用户级) | <project>/.opencode/skills/(项目级)
+# 不想安装也行:直接在 prompt 里给出 SKILL.md 绝对路径让 agent 加载
 ```
 
 ### 最小调用(给 Agent 的 prompt 模板)
@@ -73,7 +79,7 @@ git clone <skill-repo> ~/.config/opencode/skills/deep-research
 
 要求:做一份决策级深度调研报告。
 
-加载的 SKILL 路径(绝对路径): `.opencode/skills/deep-research/SKILL.md`
+加载的 SKILL 路径(绝对路径): `<你的 skills 目录>/deep-research/SKILL.md`
 
 严格按 SKILL.md 的规则执行。
 ```
@@ -87,7 +93,7 @@ git clone <skill-repo> ~/.config/opencode/skills/deep-research
 
 要求:做一份决策级深度调研报告。
 
-加载 SKILL(必须): `.opencode/skills/deep-research/SKILL.md`
+加载 SKILL(必须): `<你的 skills 目录>/deep-research/SKILL.md`
 ```
 
 ### 预期输出
@@ -386,9 +392,9 @@ research/
 
 ```bash
 # 验证 skill 安装是否正确
-ls ~/.config/opencode/skills/deep-research/SKILL.md
-diff ~/.config/opencode/skills/deep-research/SKILL.md \
-     <project>/.opencode/skills/deep-research/SKILL.md
+ls <你的 skills 目录>/deep-research/SKILL.md
+diff <用户级 skills 目录>/deep-research/SKILL.md \
+     <项目级 skills 目录>/deep-research/SKILL.md
 # 应该输出空(byte-identical)
 
 # 验证工具可用
