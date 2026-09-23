@@ -1,6 +1,6 @@
 # Deep Research — 决策级深度调研技能
 
-> 把模糊的"研究一下 X"变成可拍板的决策级报告。3 阶段方法(任务卡 → 探针搜索 → 6-lens 决策)+ Satisficing 4-C 停止门 + 9 项研究工具,产出 **WH**/**NO**/**DEFER** + 边界条件 + 反方立场的可执行报告。
+> 把模糊的"研究一下 X"变成可拍板的决策级报告。3 阶段方法(任务卡 Frame → 探针搜索 Dig → 决策 Decide)+ 停止条件 S1-S7 + 15 个工具子命令,产出 **YES**/**NO**/**DEFER** + 边界条件 + 反方立场的可执行报告。
 
 [![version v9.0](https://img.shields.io/badge/version-v9.0-blue)](./SKILL.md) [![skill: deep-research](https://img.shields.io/badge/skill-deep--research-purple)](./SKILL.md) [![spec: Agent Skills](https://img.shields.io/badge/spec-Agent%20Skills-blue)](https://docs.claude.com/en/docs/agents-and-tools/agent-skills) [![license: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-green)](../LICENSE)
 
@@ -13,7 +13,7 @@
 - [这是什么 / 给谁用](#这是什么--给谁用)
 - [价值榜](#价值榜)
 - [快速开始](#快速开始)
-- [工作流(3 阶段 + 9 项工具)](#工作流3-阶段--9-项工具)
+- [工作流(3 阶段 + 15 个工具子命令)](#工作流3-阶段--15-个工具子命令)
 - [输入 / 输出契约](#输入--输出契约)
 - [Before / After:为什么用这个 Skill](#before--after为什么用这个-skill)
 - [不适用 / Anti-Patterns](#不适用--anti-patterns)
@@ -28,7 +28,7 @@
 
 **不是**:不联网的单轮 LLM 回答,不带证据分级的"调研",不可审计的 AI 流水文。
 
-**而是**:一套**决策级 deep-research 框架**——把模糊的"研究 X"任务拆成 **任务卡 → 探针搜索 → 6-lens 决策** 三阶段,以 **Satisficing 4-C 停止门**(避免无限搜索)终结证据收集,以 **8 项 Decision-Readiness 自检**(含工具数据保真)终结报告质量,产出你能直接拿去拍板的报告。
+**而是**:一套**决策级 deep-research 框架**——把模糊的"研究 X"任务拆成 **任务卡 → 探针搜索 → 决策报告** 三阶段,以 **停止条件 S1-S7**(避免无限搜索)终结证据收集,以 **8 项 Decision-Readiness 自检**(含工具数据保真)终结报告质量,产出你能直接拿去拍板的报告。
 
 **适合谁**:
 
@@ -45,11 +45,11 @@
 
 ## 价值榜
 
-- 🎯 **任务卡先行** — Frame 阶段强制写"目标 / 工作量 / 受众 / 反方条件"任务卡,Satisficing 4-C 停止门直接基于此 checklist,杜绝"我会搜到满意为止"
-- 🔍 **9 类探针 + D1-D5 评估** — P1 范围 / P2 一手 / P3 对比 / P4 反方 / P5 冲突 / P6 风险 / P7 时效 / P8 市场 / P9 决策,每轮用 D1-D5 信息增益评估"继续 vs 停"
+- 🎯 **任务卡先行** — Frame 阶段强制写"目标 / 工作量 / 受众 / 反方条件"任务卡,停止条件 S1-S7 直接基于此 checklist,杜绝"我会搜到满意为止"
+- 🔍 **9 类探针 + 5-key 信号** — P1 范围 / P2 一手 / P3 对比 / P4 反方 / P5 冲突 / P6 风险 / P7 时效 / P8 市场 / P9 决策,每轮用 5-key 信号(新检测 / 新深度 / 新比较 / 新视角 / 新维度)评估"继续 vs 停"
 - 🧠 **ACH 竞争假设前置** — 列 ≥2 个互斥假设(例如"迁 vs 不迁 vs 推迟"),所有证据按"诊断性"分级,可诊断 = 真伪判据,不可诊断 = 仅作背景
 - 🛡️ **独立性原则** — 假设状态迁移必须有**外部证据**触发,纯自我推理不能改状态(防止"我看了一下,这个不对"型循环论证)
-- 📊 **8 项自检(含 audit)** — DELIVER 前必过:30 秒复述 + 动词主导 + 数字密度 + 边界 + 显式决策 + Red Team + 可执行 + **工具数据保真(audit ≥5/7)**
+- 📊 **8 项自检(含 audit)** — DELIVER 前必过:30 秒复述 + 动词主导 + 数字密度 + 边界 + 显式决策 + Red Team + 可执行 + **工具数据保真(audit 4 项门禁 ≥3 过)**
 - ⚖️ **4 档认知标签** — 每条证据都标 [已确认] / [已公开] / [自推断] / [未验证],读者可按"信任降级"使用
 - 🔄 **跨平台兼容** — Anthropic Claude Code / OpenCode / Cursor / Codex,均按 `SKILL.md` frontmatter 触发
 
@@ -106,50 +106,52 @@ cp -r skills/deep-research/ <你的 agent 的 skills 目录>/
 
 ---
 
-## 工作流(3 阶段 + 9 项工具)
+## 工作流(3 阶段 + 15 个工具子命令)
 
 ### 3 阶段框架
 
 ```
 ┌─ Frame(任务卡)──┐    ┌─ Dig(探针搜索)──┐    ┌─ Decide(决策)──┐
-│ • 目标 / 工作量  │ →  │ • 9 类探针      │ →  │ • 6-lens 模板   │
-│ • 受众 / 类型    │    │ • D1-D5 评估     │    │ • 8 项自检      │
-│ • 反方条件       │    │ • 4-C 停止门     │    │ • audit 验证    │
-│ • 评价标准清单   │    │ • ACH 假设迁移   │    │ • 报告输出     │
+│ • 目标 / 工作量  │ →  │ • 9 类探针      │ →  │ • lens 定深度   │
+│ • 受众 / 类型    │    │ • 5-key 信号     │    │ • 8 项自检      │
+│ • 初始假设 ≥2    │    │ • S1-S7 停止条件 │    │ • audit 验证    │
+│ • 反方条件       │    │ • ACH 假设迁移   │    │ • 报告输出     │
 └─────────────────┘    └─────────────────┘    └────────────────┘
 ```
 
-### Phase 0 · Audience Detection(决策级**强制**)
+### Frame · 受众识别(决策级**强制**)
 
 报告给谁看 → 输出格式自然调整:
 
-| 受众 | Executive Summary 重点 | 章节权重 | 数字密度 |
-| --- | --- | --- | --- |
-| **决策者(CEO/board)** | 一句话拍板 + 边界 + 责任人 | 结论最重 | ≥ 60 数字 |
-| **实务者(PM/eng)** | 假设 + 反方 + 实施步骤 | Findings + Risks 重 | ≥ 40 数字 |
-| **研究者 / 分析师** | 方法论 + 证据链 + 数据 | Methodology + Sources 重 | ≥ 30 数字 |
+| 受众 | Executive Summary 重点 | 章节权重 |
+| --- | --- | --- |
+| **决策者(CEO/board)** | 一句话拍板 + 边界 + 责任人 | 结论最重 |
+| **实务者(PM/eng)** | 假设 + 反方 + 实施步骤 | Findings + Risks 重 |
+| **研究者 / 分析师** | 方法论 + 证据链 + 数据 | Methodology + Sources 重 |
 
-### Phase 1 · Frame · 任务卡(必写)
+数字密度按 lens 调整,且**每个数字必须有来源**(SKILL.md 红线 2 / §7 第 3 项),不设伪精确配额。
+
+### Frame · 任务卡(必写)
 
 ```markdown
 ## 任务卡
-- 目标:用户最终要做什么决定 / 获得什么认知
-- 工作量:快速 / 标准 / 复杂(probe 后定)
-- 受众:决策者 / 实务人员 / 研究者 / 混合
-- 任务类型:决策 / 比较 / 证据综述 / 现状扫描 / 基准评测 / 探索
-- 副类型(可选,0-2 个):如 [比较 + 探索]
-- 范围与时间边界:可执行的时间 / 地理 / 行业范围
-- 关键评价标准(必须可勾选):
-  - [ ] 主张 X 由 ≥3 个独立来源支持
-  - [ ] 数字 Y 已锚到 ≥1 个一手来源
-  - [ ] 反方 Z 至少 1 个代表观点被引用
-  - [ ] 不确定性已被显式标注
-- 已知约束:预算 / 时间 / 禁用来源 / 风险偏好
-- 初始判断:对答案的预判(可空)
-- 反方条件:什么证据会推翻初始判断
+
+- 用户目标：最终要做什么决定 / 获得什么认知 / 采取什么行动
+- 决策后果：低 / 中 / 高（错误答案的代价？是否涉及钱/法律/医疗/安全/不可逆？）
+- 任务类型（primary_lens，必填）：决策 / 比较 / 证据综述 / 现状扫描 / 基准评测 / 探索
+- 副类型（secondary_lens，0-2 个）：
+- 受众：决策者（默认）/ 实务人员 / 研究者 / 混合
+- 范围边界：时间 / 地理 / 行业 / 预算 / 排除项
+- 初始假设（≥2 条互斥，含"主张为假"版本）：H1 / H2 / (H3)
+- Must-have 标准（研究完成的验收清单）：
+  - [ ] ...
+- 反方条件：什么证据会推翻或重写初始判断
+- 工作量：L1 快速 / L2 标准 / L3 复杂（probe 2-5 次后定，可中途升降级）
 ```
 
-### Phase 2 · Dig · 探针搜索 + Satisficing 4-C
+> 唯一权威模板在 [`./SKILL.md`](./SKILL.md) §4.1;lens 判别拿不准时的 5 个边界问题见 `references/report-rendering.md`,仍答不上默认"决策"。
+
+### Dig · 探针搜索 + 停止条件(S1-S7)
 
 **9 类探针**:
 
@@ -165,36 +167,43 @@ cp -r skills/deep-research/ <你的 agent 的 skills 目录>/
 | P8 市场 | 发现真实使用反馈 | "用户抱怨、采购障碍、市场接受度如何?" |
 | P9 决策 | 判断是否足够行动 | "现在是否足以推荐、排除、等待或继续验证?" |
 
-**D1-D5 信息增益评估**(每轮探针后):
+**5-key 信号**(每轮记录,JSON key 与工具完全一致;SKILL.md §4.2 唯一权威):
 
-- D1 补齐关键缺口 → 推进完成度
-- D2 **改变结论**?(Highest value)
-- D3 解决高可信冲突
-- D4 发现关键边界条件
-- D5 把主张升级到更高质量来源
+| key | 本轮回答的问题 |
+| --- | --- |
+| 新检测 | 是否补齐了 Must-have 证据缺口? |
+| 新深度 | 是否把关键主张升级到更高级来源? |
+| 新比较 | 是否发现或解决了来源冲突? |
+| 新视角 | 是否可能改变结论、推荐或排序? |
+| 新维度 | 是否发现新的边界条件、约束或风险? |
 
-**Satisficing 4-C 停止门**(任一即停):
+Sum ≥ 1 = 有推进;Sum = 0 → 下一 probe 必须 pivot;连续 2 轮 Sum=0 且无高风险未决项 → 进 Decide。
 
-| # | 条件 | 工具检查 |
+**停止条件**(满足任一即进 Decide;SKILL.md §4.2 唯一权威表):
+
+| # | 条件 | 判定者 |
 | --- | --- | --- |
-| S1 | 任务卡关键标准 checklist 全部勾选 | agent 评估 |
-| S2 | 主要分歧已解决或显式未决 | agent 评估 |
-| S3 | 高可信度反方出现 → 假设转 无效 | agent 评估 |
-| S4 | 达到工作量硬上限(L1=20 / L2=50 / L3=80 搜索调用) | `check-stop` |
+| S1 | 任务卡 Must-have 全部满足 | 你(勾 checklist) |
+| S2 | 主要分歧已解决,或已标为"未决且不影响当前行动" | 你 |
+| S3 | 颠覆性反证出现,假设转"无效",任务需 reframe | 你 |
+| S4 | 达到 round 硬上限(L1=20 / L2=50 / L3=80 搜索调用) | `check-stop --effort L?` |
+| S5 | 连续 2 probe 零增益且无高风险未决项 | 你 |
+| S6 | 缺用户偏好/预算/约束,继续搜索无效 → 问用户 | 你 |
+| S7 | 依赖的最新状态无法验证 → 带不确定性输出 | 你 |
 
-### Phase 3 · Decide · 决策 + 8 项自检
+### Decide · 决策 + 8 项自检
 
 **8 项 Decision-Readiness 自检**(DELIVER 前必过):
 
 ```markdown
 ☐ 1. 30 秒复述测试 — Executive Summary 第一段就是答案
 ☐ 2. 动词主导开篇 — 不是"我们认为...",而是"建议升级"
-☐ 3. 数字密度 — 按 lens 不同(决策类 ≥60 数字 / 实务类 ≥40 / 研究类 ≥30)
+☐ 3. 数字密度符合 lens — 且每个数字有来源(红线 2),不设伪精确配额
 ☐ 4. 边界条件 — 至少 1 个 Hold/Revert 触发条件
 ☐ 5. 显式 YES/NO/DEFER — 决策类 lens 强制
 ☐ 6. 反方诚实 — Red Team + Steel-manned(具体对手身份)
 ☐ 7. 可执行 — Who / What / When 三段
-☐ 8. 工具数据保真 — `python3 scripts/research_tools.py audit` ≥5/7
+☐ 8. 工具数据保真 — `python3 scripts/research_tools.py audit --topic <slug>` 的 4 项 data-presence 门禁 ≥3 pass(sources ≥5 / rounds ≥3 / claims ≥3 / hyp_updates ≥1)
 ```
 
 未通过第 8 项的处置(3 选 1):
@@ -226,7 +235,7 @@ cp -r skills/deep-research/ <你的 agent 的 skills 目录>/
 ## 0 · 元信息
 - 报告日期 / 受众 / 工作量 / lens 组合 / 主要限制
 
-## 1 · Executive Summary — 答:**WH/NO/DFFRR**(一句话拍板)
+## 1 · Executive Summary — 答:**YES/NO/DEFER**(一句话拍板)
 
 ## 2 · Key Findings(3-7 条核心证据)
 
@@ -255,7 +264,7 @@ research/
     └── <topic-slug>-<YYYYMMDD>.json   # ledger(所有证据可回放)
 ```
 
-**绝不允许**写到 `research/` 以外的路径(SKILL.md §6 Output Discipline)。
+**绝不允许**写到 `research/` 以外的路径(SKILL.md §4.3)。
 
 ---
 
@@ -264,14 +273,13 @@ research/
 | 维度 | 不使用(裸 LLM) | 使用本 skill |
 | --- | --- | --- |
 | 报告结构 | 5-7 段流水文,无章节 | 5 章节强制结构 + 验证 gate |
-| 证据链 | 引用源 5-10 个,不分级 | T1-T5 分级 + ≥ 标注 4 档认知标签 |
+| 证据链 | 引用源 5-10 个,不分级 | 来源三档分级(一手 / 二手 / 传闻) + 4 档认知标签 |
 | 决策可追溯 | 决策建议无 claim 引用 | 每个推荐都有 C#/S# 锚定到 ledger |
 | 对抗视角 | 0 | Red Team ≥ 4 视角(技术/商业/监管/行为)+ Steel-manned |
-| 验证 | 无 | **8 项 Decision-Readiness 自检**(含 audit ≥5/7) |
+| 验证 | 无 | **8 项 Decision-Readiness 自检**(含 audit 门禁) |
 | 持续上下文 | 长研究后 LLM context 溢出 | Ledger 持久化,信息不回退 |
-| 流程纪律 | "我会搜到满意为止" | Satisficing 4-C 停止门,防过载 |
+| 流程纪律 | "我会搜到满意为止" | 停止条件 S1-S7,防过载 |
 | Hypothesis 状态 | 模糊"高/中/低" + 数字伪精度 | 有效/修正/无效/待定 4 态 + 高/中/低 3 档 |
-| R17 实测认可 | 单论 7/7 + 决策 | R17 ledger: 18 sources + 14 claims + 7 findings / R17b: 26 sources + 34 claims |
 
 ---
 
@@ -291,21 +299,21 @@ research/
 | 反模式 | 为什么坏 |
 | --- | --- |
 | ✗ 给 Agent prompt 时复述 SKILL 内容 | 污染测试,SKILL 价值被 prompt 遮挡 |
-| ✗ 用 L1/L2/L3 同时表达难度和受众 | 一维标签坍缩,3 维度独立(per #244) |
-| ✗ 报告章节按"建议 / 分析 / 结论" 主题型标题 | 必须用"结论:推荐 rust"嵌入式标题(per #227) |
+| ✗ 用 L1/L2/L3 同时表达难度和受众 | 一维标签坍缩,3 维度独立 |
+| ✗ 报告章节按"建议 / 分析 / 结论" 主题型标题 | 必须用"结论:推荐 rust"嵌入式标题 |
 | ✗ 用"73% confidence"伪精度数字 | 改 用"高/中/低" 3 档定性 |
-| ✗ audit 失败 + 沉默发报告 | 违反 SOUL.md 第 4 锚点 "数据未持久化 = 数据未存在" |
-| ✗ 把"跨域"作为默认章节 | 必须按 lens 条件启用(per #245) |
+| ✗ audit 失败 + 沉默发报告 | 违反诚实底线(SKILL.md 红线 1:"数据未持久化 = 数据未存在") |
+| ✗ 把"跨域"作为默认章节 | 必须按 lens 条件启用 |
 | ✗ 不写 Sources Register,直接 inline [Sn] | Tools 无法注入 metadata |
 | ✗ 一份报告超 50 KB | 表明缺乏 focus,应该拆分 |
 
 ### ✅ 推荐做法
 
-- ✓ Prompt 中只给主题 + 要求 + SKILL 路径,不复述(per #362)
-- ✓ Frame 阶段预设 Satisficing 4-C(per #254)
+- ✓ Prompt 中只给主题 + 要求 + SKILL 路径,不复述
+- ✓ Frame 阶段预设停止条件 S1-S7
 - ✓ ACH ≥2 互斥假设 + 诊断性证据(per hypothesis-redteam.md)
 - ✓ 状态迁移必须有外部证据触发(独立性原则)
-- ✓ DELIVER 前 audit ≥5/7
+- ✓ DELIVER 前 audit 门禁通过(4 项 ≥3 pass)
 - ✓ 报告写到 `research/<slug>-<YYYY-MM>.md`
 
 ---
@@ -337,7 +345,7 @@ research/
 
 随时可用 `python3 scripts/research_tools.py audit` 回放所有证据。
 
-### 3. 可审计:三标签体系
+### 3. 可审计:双评级体系
 
 每个数据点有 **2 个评级**(来源 tier + 认知标签):
 
@@ -371,7 +379,7 @@ research/
   自我推理: "我重新想了想,这个不对"
   → 违反独立性原则 — 应保持有效 / 修正,或转 待定
 
-独立性原则是 SOUL.md 第 1 条底线之一。
+独立性原则对应 SKILL.md 红线 4(假设改判需外部证据)。
 ```
 
 ---
@@ -381,11 +389,11 @@ research/
 | 症状 | 原因 | 解决 |
 | --- | --- | --- |
 | 加载 SKILL 后 agent 还是用旧版 | OpenCode 内存缓存 SKILL | 把 SKILL.md 的完整内容复制到 prompt(临时) / 重启 agent |
-| audit 失败 `0/7` | 调用 setup 没真调用过 claim/round | 重跑每个 subcommand,验证有 OK 输出 |
+| audit 门禁 FAIL(如 `0/4 pass`) | 调用 setup 没真调用过 claim/round/source/hyp | 重跑每个 subcommand,验证有 OK 输出,再跑 audit |
 | 报告找不到 `[Sn]` 引用 inline metadata | Sources Register 不在文档末尾 | 把 Sources 段加到 markdown 末尾(独立 `## Sources` 标题) |
 | `fcntl` ImportError on Windows | macOS/Linux POSIX-only API | 工具自动降级为 unlocked write,可能有 race — 升级到 Linux / macOS,或在 WSL 内跑 |
-| Ledger 写到旧文件 | `Ledger().load()` 按 mtime 选最新 | v8.1.8 fix(--ledger 参数)。临时方案:用 `python3` import 直接传 `load(filepath=...)` |
-| claim C# 重复编号 | 多 proess 并发,lock 失败 | CLI 调用必须 serial(SKILL.md §6 reminder) |
+| Ledger 写到旧文件 / 选错 ledger | 同目录多个 ledger 未显式指定 | 用 `--topic <slug>` 指定(`list` 查看可用 topic;setup 输出的 slug 即 `--topic` 值) |
+| claim C# 重复编号 | 多进程并发,lock 失败 | CLI 调用必须 serial(SKILL.md §2 reminder) |
 | 报告过长 > 50 KB | 没收紧核心主张 | 拆分为多份聚焦报告 |
 
 ### 自诊断命令
@@ -399,12 +407,11 @@ diff <用户级 skills 目录>/deep-research/SKILL.md \
 
 # 验证工具可用
 python3 <skill>/scripts/research_tools.py --help
-python3 <skill>/scripts/research_tools.py audit
-# 应输出 15 subcommand 列表
+# 应输出 15 个 subcommand 列表
 
-# 验证 ledger 完整性
-python3 <skill>/scripts/research_tools.py audit
-# 应输出 7-item data-presence,≥5/7 必须 ✓
+# 验证 ledger 完整性(DELIVER 前必跑)
+python3 <skill>/scripts/research_tools.py audit --topic <topic-slug>
+# 应输出 4-item data-presence gate,≥3 项 ✓ 才 PASS
 ```
 
 ---
@@ -423,6 +430,7 @@ python3 <skill>/scripts/research_tools.py audit
 | 假设状态 | 中文 4 态(有效 / 修正 / 无效 / 待定)+ 三档置信(高/中/低),多假设(ACH) |
 | Ledger schema | 2.0(多假设 hypotheses[];兼容读旧 1.0) |
 | 工作量上限 | L1=20 / L2=50 / L3=80 搜索调用 |
+| 工具保真门禁 | 4 项 data-presence(sources ≥5 / rounds ≥3 / claims ≥3 / hyp_updates ≥1),≥3 项 PASS |
 
 ### 升级策略
 
@@ -439,7 +447,7 @@ python3 <skill>/scripts/research_tools.py audit
 - **v8.1.0**(2026-07-15):argparse 重构 + 认知标签 CLI 化(claim / claims-dump / suggest-label)
 - **v8.0.0**(2026-07-14):基于 12-问题审计全面重写,从 `research` 改名为 `deep-research`
 
-逐版本细节见 `CHANGELOG.md`;R1-R17 回归历史见 `tests/regression-log.md`。
+逐版本细节见 `CHANGELOG.md`。
 
 ---
 
@@ -476,15 +484,11 @@ python3 <skill>/scripts/research_tools.py audit
 | `python3 scripts/research_tools.py setup` | 初始化 ledger |
 | `python3 scripts/research_tools.py claim` | 记录认知标签主张 |
 | `python3 scripts/research_tools.py hyp 有效` | 更新假设状态(中文) |
-| `python3 scripts/research_tools.py check-stop --effort L2` | 4-C 停止门检查 |
-| `python3 scripts/research_tools.py audit` | DELIVER 前必跑(8-item self-check 第 8) |
+| `python3 scripts/research_tools.py check-stop --effort L2` | S1-S7 停止条件检查 |
+| `python3 scripts/research_tools.py audit --topic <slug>` | DELIVER 前必跑(保真门禁,SKILL.md §7 第 8 项) |
 | `python3 scripts/research_tools.py inline --write <file>` | 自动注入 metadata |
-| `python3 scripts/research_tools.py suggest-path "topic"` | 生成 `research/<slug>.md` 路径 |
-
-### 验证用例
-
-详细见 `tests/gold-cases.md`(14 个金标用例)+ `tests/regression-log.md`(R1-R17 历史)。
+| `python3 scripts/research_tools.py suggest-path "topic"` | 生成 `research/<slug>-<YYYY-MM>.md` 路径 |
 
 ---
 
-*Last updated: v9.0 refactor*
+*Last updated: 2026-09-23(与 SKILL.md v9.0 同步)*

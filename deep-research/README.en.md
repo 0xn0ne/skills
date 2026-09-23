@@ -1,6 +1,6 @@
 # Deep Research — Decision-Grade Research Skill
 
-> Turn vague "research X" into a boardroom-ready decision report. 3-phase method (Task Card → Probe Search → 6-lens Decision) + Satisficing 4-C stop gate + 9 research tools, producing a **YES**/**NO**/**DEFER** + boundary conditions + counter-position + executable report.
+> Turn vague "research X" into a boardroom-ready decision report. 3-phase method (Task Card → Probe Search → Decision) + S1-S7 stop conditions + 15 tool subcommands, producing a **YES**/**NO**/**DEFER** + boundary conditions + counter-position + executable report.
 
 [![version v9.0](https://img.shields.io/badge/version-v9.0-blue)](./SKILL.md) [![skill: deep-research](https://img.shields.io/badge/skill-deep--research-purple)](./SKILL.md) [![spec: Agent Skills](https://img.shields.io/badge/spec-Agent%20Skills-blue)](https://docs.claude.com/en/docs/agents-and-tools/agent-skills) [![license: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-green)](../LICENSE)
 
@@ -13,7 +13,7 @@
 - [What is this / Who is it for](#what-is-this--who-is-it-for)
 - [Value bullets](#value-bullets)
 - [Quick start](#quick-start)
-- [Workflow (3 phases + 9 tools)](#workflow-3-phases--9-tools)
+- [Workflow (3 phases + 15 tools)](#workflow-3-phases--15-tools)
 - [Input / Output contract](#input--output-contract)
 - [Before / After: why this skill](#before--after-why-this-skill)
 - [Out-of-scope / Anti-patterns](#out-of-scope--anti-patterns)
@@ -28,7 +28,7 @@
 
 **Not**: a single-turn unconnected LLM answer; an "exploration" without evidence grading; an AI stream-of-consciousness you can't audit.
 
-**Instead**: a **decision-grade deep-research framework** — splits a vague "research X" task into **Task Card → Probe Search → 6-lens Decision** 3 phases, terminates evidence collection via **Satisficing 4-C stop gate** (no infinite loops), terminates report quality via **8-item Decision-Readiness self-check** (including tool-data-fidelity audit), producing a report you can take straight to a decision meeting.
+**Instead**: a **decision-grade deep-research framework** — splits a vague "research X" task into **Task Card → Probe Search → Decision** 3 phases, terminates evidence collection via the **S1-S7 stop conditions** (no infinite loops), terminates report quality via the **8-item Decision-Readiness self-check** (including tool-data-fidelity audit), producing a report you can take straight to a decision meeting.
 
 **Who is it for**:
 
@@ -45,11 +45,11 @@
 
 ## Value bullets
 
-- 🎯 **Task-card-first** — Frame phase mandates writing "goal / effort / audience / counter-evidence conditions" task card; Satisficing 4-C stop gate uses this checklist directly, killing the vague "I'll search until I'm satisfied" mode
-- 🔍 **9 probe types + D1-D5 evaluation** — P1 scope / P2 primary / P3 comparison / P4 counter / P5 conflict / P6 risk / P7 temporal / P8 market / P9 decision; each round uses D1-D5 info-gain to decide "continue vs stop"
+- 🎯 **Task-card-first** — Frame phase mandates writing "goal / effort / audience / counter-evidence conditions" task card; S1-S7 stop conditions use this checklist directly, killing the vague "I'll search until I'm satisfied" mode
+- 🔍 **9 probe types + 5-key signals** — P1 scope / P2 primary / P3 comparison / P4 counter / P5 conflict / P6 risk / P7 temporal / P8 market / P9 decision; each round uses the 5-key signals (新检测 / 新深度 / 新比较 / 新视角 / 新维度) to decide "continue vs stop"
 - 🧠 **ACH competing hypotheses** — list ≥ 2 mutually-exclusive hypotheses (e.g., "migrate / don't / defer"), grade all evidence by **diagnosticity** — high-diagnosticity can falsify alternatives, low-diagnosticity is background only
 - 🛡️ **Independence principle** — hypothesis state transitions MUST be triggered by **external evidence**, not self-reasoning (kills "I thought about it, it's wrong" loops)
-- 📊 **8-item self-check (incl. audit)** — pre-DELIVER mandatory: 30-sec retelling + verb-led opener + digit density + boundary conditions + explicit decision + Red Team + executable + **tool-data-fidelity (audit ≥5/7)**
+- 📊 **8-item self-check (incl. audit)** — pre-DELIVER mandatory: 30-sec retelling + verb-led opener + digit density + boundary conditions + explicit decision + Red Team + executable + **tool-data-fidelity (audit 4-item gate ≥3 pass)**
 - ⚖️ **4-level cognitive labels** — every claim tagged `[已确认]` / `[已公开]` / `[自推断]` / `[未验证]`; readers apply "trust-demotion" themselves
 - 🔄 **Cross-platform** — Anthropic Claude Code / OpenCode / Cursor / Codex, all triggered via `SKILL.md` frontmatter
 
@@ -106,50 +106,52 @@ Output 3: terminal print — explicit decision (**YES** / **NO** / **DEFER**) + 
 
 ---
 
-## Workflow (3 phases + 9 tools)
+## Workflow (3 phases + 15 tools)
 
 ### 3-phase framework
 
 ```
 ┌─ Frame (Task card) ──┐   ┌─ Dig (Probe search) ──┐   ┌─ Decide (Decision) ──┐
-│ • Goal / Effort      │ → │ • 9 probe types       │ → │ • 6-lens template    │
-│ • Audience / Lens    │   │ • D1-D5 evaluation    │   │ • 8-item self-check  │
-│ • Counter-evidence   │   │ • 4-C stop gate       │   │ • audit verification│
-│ • Criteria checklist │   │ • ACH transitions     │   │ • Report delivery    │
+│ • Goal / Effort      │ → │ • 9 probe types       │ → │ • lens sets depth    │
+│ • Audience / Lens    │   │ • 5-key signals       │   │ • 8-item self-check  │
+│ • ≥2 hypotheses      │   │ • S1-S7 stop conds.   │   │ • audit verification │
+│ • Counter-evidence   │   │ • ACH transitions     │   │ • Report delivery    │
 └─────────────────────┘   └──────────────────────┘   └──────────────────────┘
 ```
 
-### Phase 0 · Audience Detection (decision-grade **mandatory**)
+### Frame · Audience (decision-grade **mandatory**)
 
 Report audience determines output format naturally:
 
-| Audience | Executive Summary focus | Section weights | Digit density |
-| --- | --- | --- | --- |
-| **Decision-makers** (CEO / board) | one-line verdict + boundaries + owners | Conclusions heaviest | ≥ 60 digits |
-| **Practitioners** (PM / eng) | hypotheses + counter + rollout steps | Findings + Risks heavy | ≥ 40 digits |
-| **Researchers / analysts** | methodology + evidence chain + data | Methodology + Sources heavy | ≥ 30 digits |
+| Audience | Executive Summary focus | Section weights |
+| --- | --- | --- |
+| **Decision-makers** (CEO / board) | one-line verdict + boundaries + owners | Conclusions heaviest |
+| **Practitioners** (PM / eng) | hypotheses + counter + rollout steps | Findings + Risks heavy |
+| **Researchers / analysts** | methodology + evidence chain + data | Methodology + Sources heavy |
 
-### Phase 1 · Frame · Task card (mandatory)
+Digit density adapts per lens, and **every number must have a source** (SKILL.md red-line 2 / §7 item 3) — no fake-precision quotas.
+
+### Frame · Task card (mandatory)
 
 ```markdown
 ## Task card
-- Goal: what decision / understanding does the user need
-- Effort: quick / standard / complex (decided after probe)
-- Audience: decision-maker / practitioner / researcher / mixed
-- Lens: decision / comparison / synthesis / scan / benchmark / exploratory
-- Sub-lens (optional, 0-2): e.g., [comparison + exploratory]
-- Scope & time boundaries: time / geography / industry scope
-- Key evaluation criteria (must be checklist):
-  - [ ] Claim X supported by ≥ 3 independent sources
-  - [ ] Number Y anchored to ≥ 1 primary source
-  - [ ] Counter-position Z has ≥ 1 representative view cited
-  - [ ] Uncertainty explicitly marked
-- Known constraints: budget / time / disallowed sources / risk tolerance
-- Initial judgement: prior prediction (can be empty)
-- Counter-evidence conditions: what would overturn the initial judgement
+
+- User goal: what decision / understanding / action the user needs
+- Decision stakes: low / medium / high (cost of a wrong answer? money/legal/medical/safety/irreversible?)
+- Lens (primary_lens, required): decision / comparison / synthesis / scan / benchmark / exploratory
+- Sub-lens (secondary_lens, 0-2):
+- Audience: decision-maker (default) / practitioner / researcher / mixed
+- Scope boundaries: time / geography / industry / budget / exclusions
+- Initial hypotheses (≥2 mutually exclusive, incl. a "claim is false" version): H1 / H2 / (H3)
+- Must-have criteria (acceptance checklist for "research done"):
+  - [ ] ...
+- Counter-evidence conditions: what would overturn or rewrite the initial judgement
+- Effort: L1 quick / L2 standard / L3 complex (fixed after 2-5 probes; may change mid-run)
 ```
 
-### Phase 2 · Dig · Probe search + Satisficing 4-C
+> The single-authority template lives in [`./SKILL.md`](./SKILL.md) §4.1; if the lens is ambiguous, use the 5 boundary questions in `references/report-rendering.md`, else default to "decision".
+
+### Dig · Probe search + stop conditions (S1-S7)
 
 **9 probe types**:
 
@@ -165,36 +167,43 @@ Report audience determines output format naturally:
 | P8 market | surface real-world usage | "User complaints, adoption barriers?" |
 | P9 decision | check action-readiness | "Sufficient to recommend / exclude / wait?" |
 
-**D1-D5 info-gain assessment** (each round):
+**5-key signals** (recorded every round; JSON keys match the tool exactly; SKILL.md §4.2 is the single authority):
 
-- D1 fills critical evidence gap → progress
-- D2 **could change conclusion?** (Highest value)
-- D3 resolves high-credibility conflict
-- D4 surfaces key boundary conditions
-- D5 upgrades claim to higher-credibility source
+| key | Question this round answers |
+| --- | --- |
+| 新检测 (new-detection) | Did it fill a Must-have evidence gap? |
+| 新深度 (new-depth) | Did it upgrade a key claim to a higher-tier source? |
+| 新比较 (new-comparison) | Did it surface or resolve a source conflict? |
+| 新视角 (new-perspective) | Could it change the conclusion, recommendation or ranking? |
+| 新维度 (new-dimension) | Did it reveal new boundary conditions, constraints or risks? |
 
-**Satisficing 4-C stop gate** (any one = stop):
+Sum ≥ 1 = progress; Sum = 0 → next probe must pivot; 2 consecutive Sum=0 rounds with no high-stakes open item → enter Decide.
 
-| # | Condition | Tool check |
+**Stop conditions** (any one = enter Decide; SKILL.md §4.2 is the single authority):
+
+| # | Condition | Judge |
 | --- | --- | --- |
-| S1 | Task card criteria checklist all checked | agent review |
-| S2 | Major disagreements resolved or explicitly unresolved | agent review |
-| S3 | High-credibility counter found → hypothesis to 无效 (KILLED) | agent review |
-| S4 | Workload hard ceiling reached (L1=20 / L2=50 / L3=80 search calls) | `check-stop` |
+| S1 | All task-card Must-have criteria met | you (tick checklist) |
+| S2 | Major disagreements resolved, or explicitly "unresolved without affecting action" | you |
+| S3 | Disconfirming evidence found → hypothesis to 无效 (KILLED), task needs reframe | you |
+| S4 | Round hard ceiling reached (L1=20 / L2=50 / L3=80 search calls) | `check-stop --effort L?` |
+| S5 | 2 consecutive zero-gain probes with no high-stakes open item | you |
+| S6 | Missing user preference / budget / constraint → ask the user | you |
+| S7 | Latest state cannot be verified → deliver with uncertainty | you |
 
-### Phase 3 · Decide · Decision + 8-item self-check
+### Decide · Decision + 8-item self-check
 
 **8-item Decision-Readiness self-check** (mandatory before DELIVER):
 
 ```markdown
 ☐ 1. 30-sec retelling — Executive Summary paragraph 1 IS the answer
 ☐ 2. Verb-led opener — "Recommend upgrading" not "we think..."
-☐ 3. Digit density — per-lens (decision ≥60 / practitioner ≥40 / research ≥30)
+☐ 3. Digit density fits the lens — every number has a source (red-line 2); no fake-precision quotas
 ☐ 4. Boundary conditions — ≥ 1 Hold / Revert trigger
 ☐ 5. Explicit YES/NO/DEFER — decision lens mandatory
 ☐ 6. Counter honesty — Red Team + Steel-manned (named real opponent)
 ☐ 7. Executable — Who / What / When three-line
-☐ 8. Tool-data-fidelity — `python3 scripts/research_tools.py audit` ≥5/7
+☐ 8. Tool-data-fidelity — `python3 scripts/research_tools.py audit --topic <slug>` 4-item data-presence gate ≥3 pass (sources ≥5 / rounds ≥3 / claims ≥3 / hyp_updates ≥1)
 ```
 
 Audit item 8 failure handling (choose 1):
@@ -203,7 +212,7 @@ Audit item 8 failure handling (choose 1):
 - **DELAY** — tell user "tool calls failed, will give brief reply, full report later"
 - **Disclose report** — end with `本报告数据来自 in-context 推理,仅供参考` disclosure
 
-**FORBIDDEN**: audit failure + silent delivery = violates SOUL.md 4th anchor "data not persisted = data not real".
+**FORBIDDEN**: audit failure + silent delivery = violates honesty red-line 1 "data not persisted = data not real" (SKILL.md §2).
 
 ---
 
@@ -255,7 +264,7 @@ research/
     └── <topic-slug>-<YYYYMMDD>.json   # ledger (replayable)
 ```
 
-**Never** write outside `research/` (SKILL.md §6 Output Discipline).
+**Never** write outside `research/` (SKILL.md §4.3).
 
 ---
 
@@ -264,14 +273,13 @@ research/
 | Dimension | Without this skill (raw LLM) | With this skill |
 | --- | --- | --- |
 | Report structure | 5-7 paragraph stream, no chapter discipline | 5-chapter forced structure + verification gate |
-| Evidence chain | 5-10 cited sources, no grading | T1-T5 grading + 4 cognitive labels |
+| Evidence chain | 5-10 cited sources, no grading | 3-tier source grading (primary / secondary / anecdotal) + 4 cognitive labels |
 | Decision traceability | No claim-to-recommendation anchors | Every recommendation anchored to C#/S# in ledger |
 | Counter perspective | 0 | Red Team ≥ 4 perspectives (tech / business / regulatory / behavioral) + Steel-manned |
-| Verification | None | **8-item Decision-Readiness self-check** (incl. audit ≥5/7) |
+| Verification | None | **8-item Decision-Readiness self-check** (incl. audit gate) |
 | Long-context persistence | LLM context overflow on long research | Ledger persistence, no info loss |
-| Stop discipline | "I'll search until I'm satisfied" | Satisficing 4-C stop gate, no overload |
+| Stop discipline | "I'll search until I'm satisfied" | S1-S7 stop conditions, no overload |
 | Hypothesis state | Vague "high/medium/low" + fake-precision digits | 有效 / 修正 / 无效 / 待定 4 states + 高/中/低 3 levels |
-| R17b verification | Single-decision 7/7 + recommendation | R17b ledger: 18 sources + 14 claims + 7 findings + 5 hyp updates |
 
 ---
 
@@ -291,21 +299,21 @@ research/
 | Anti-pattern | Why bad |
 | --- | --- |
 | ✗ Retelling SKILL content in agent prompt | Pollutes test, occludes SKILL value |
-| ✗ Use L1/L2/L3 simultaneously for effort AND audience | Dimensional collapse — keep 3 dimensions independent (per #244) |
-| ✗ Report headers using topic form ("Suggestions / Analysis / Conclusions") | Must use conclusion-embedded ("Recommend rust migration") (per #227) |
+| ✗ Use L1/L2/L3 simultaneously for effort AND audience | Dimensional collapse — keep 3 dimensions independent |
+| ✗ Report headers using topic form ("Suggestions / Analysis / Conclusions") | Must use conclusion-embedded ("Recommend rust migration") |
 | ✗ "73% confidence" fake-precision digits | Replace with 高/中/低 qualitative |
-| ✗ Audit failure + silent report delivery | Violates SOUL.md 4th anchor "data not persisted = data not real" |
-| ✗ Cross-Domain as default chapter | Conditional on lens (per #245) |
+| ✗ Audit failure + silent report delivery | Violates honesty red-line 1 "data not persisted = data not real" (SKILL.md §2) |
+| ✗ Cross-Domain as default chapter | Conditional on lens |
 | ✗ No Sources Register, just inline [Sn] | Tools can't inject metadata |
 | ✗ Report > 50 KB | Indicates lack of focus — split into multiple focused reports |
 
 ### ✅ Recommended practice
 
-- ✓ Agent prompt contains **only** topic + requirement + SKILL path (per #362)
-- ✓ Frame phase preset Satisficing 4-C (per #254)
+- ✓ Agent prompt contains **only** topic + requirement + SKILL path
+- ✓ Frame phase presets the S1-S7 stop conditions
 - ✓ ACH ≥ 2 mutual hypotheses + diagnosticity grading (per hypothesis-redteam.md)
 - ✓ State transitions require external evidence (Independence principle)
-- ✓ Pre-DELIVER audit ≥5/7
+- ✓ Pre-DELIVER audit gate passes (4 items ≥3 pass)
 - ✓ Reports to `research/<slug>-<YYYY-MM>.md`
 
 ---
@@ -337,7 +345,7 @@ Every key claim is written to `research/.cache/<topic>-<YYYYMMDD>.json`:
 
 Replay anytime via `python3 scripts/research_tools.py audit`.
 
-### 3. Auditable: 3-label system
+### 3. Auditable: dual rating system
 
 Every data point carries **2 ratings**:
 
@@ -371,7 +379,7 @@ Readers apply "trust demotion" — decisions can rely on [已确认 + Primary], 
   Self-reasoning: "I thought about it, this is wrong"
   → Violates Independence — should stay 有效 / 修正, or → 待定 (UNRESOLVED)
 
-Independence principle is one of SOUL.md 1st-tier anchors.
+The Independence principle corresponds to SKILL.md red-line 4 (hypothesis changes require external evidence).
 ```
 
 ---
@@ -381,11 +389,11 @@ Independence principle is one of SOUL.md 1st-tier anchors.
 | Symptom | Cause | Fix |
 | --- | --- | --- |
 | Agent still uses old skill version after load | OpenCode caches SKILL in memory | Copy SKILL.md full content into prompt (temporary) / restart agent |
-| audit shows `0/7` | Setup called but no claim/round actually invoked | Re-run each subcommand, verify "OK" line output |
+| audit gate FAIL (e.g. `0/4 pass`) | Setup called but claim/round/source/hyp never actually invoked | Re-run each subcommand, verify "OK" line output, then re-run audit |
 | `[Sn]` references not detected by inline metadata | Sources Register not at document end | Add Sources section to markdown bottom (independent `## Sources` header) |
 | `fcntl` ImportError on Windows | POSIX-only API (macOS / Linux) | Tool auto-degrades to unlocked write, may race — upgrade to Linux/macOS, or use WSL |
-| Ledger written to wrong file | `Ledger().load()` selects by mtime | v8.1.8 fix (--ledger flag). Temp workaround: `python3 -c "from research_tools import Ledger; Ledger().setup(...)"` with explicit `load(filepath=...)` |
-| Claim C# numbers duplicated | Multi-process concurrent, lock failed | CLI calls MUST be serial (SKILL.md §6 reminder) |
+| Ledger written to wrong file / wrong ledger selected | Multiple ledgers in same dir without explicit topic | Pass `--topic <slug>` (run `list` to see topics; the slug printed by `setup` is the `--topic` value) |
+| Claim C# numbers duplicated | Multi-process concurrency, lock failed | CLI calls MUST be serial (SKILL.md §2 reminder) |
 | Report too long > 50 KB | Insufficient focus | Split into multiple focused reports |
 
 ### Self-diagnostic commands
@@ -399,12 +407,11 @@ diff <user-level skills dir>/deep-research/SKILL.md \
 
 # Verify tools work
 python3 <skill>/scripts/research_tools.py --help
-python3 <skill>/scripts/research_tools.py audit
-# Should list 15 subcommands / show ledger summary
+# Should list 15 subcommands
 
-# Verify ledger integrity
-python3 <skill>/scripts/research_tools.py audit
-# Should output 7-item data-presence, ≥5/7 must ✓
+# Verify ledger integrity (mandatory before DELIVER)
+python3 <skill>/scripts/research_tools.py audit --topic <topic-slug>
+# Should print 4-item data-presence gate; ≥3 ✓ required to PASS
 ```
 
 ---
@@ -423,6 +430,7 @@ python3 <skill>/scripts/research_tools.py audit
 | Hypothesis state | 中文 4 states (有效 / 修正 / 无效 / 待定) + 3-level conf (高/中/低), multi-hypothesis (ACH) |
 | Ledger schema | 2.0 (multi-hypotheses[]; reads legacy 1.0) |
 | Workload ceilings | L1=20 / L2=50 / L3=80 search calls |
+| Tool fidelity gate | 4-item data-presence (sources ≥5 / rounds ≥3 / claims ≥3 / hyp_updates ≥1), ≥3 required to PASS |
 
 ### Upgrade policy
 
@@ -439,7 +447,7 @@ python3 <skill>/scripts/research_tools.py audit
 - **v8.1.0** (2026-07-15): argparse refactor + cognitive-label CLI (claim / claims-dump / suggest-label)
 - **v8.0.0** (2026-07-14): Comprehensive rewrite per 12-issue audit, renamed from `research` to `deep-research`
 
-Full per-version detail in `CHANGELOG.md`; R1-R17 regression history in `tests/regression-log.md`.
+Full per-version detail in `CHANGELOG.md`.
 
 ---
 
@@ -476,15 +484,11 @@ Full per-version detail in `CHANGELOG.md`; R1-R17 regression history in `tests/r
 | `python3 scripts/research_tools.py setup` | Initialize ledger |
 | `python3 scripts/research_tools.py claim` | Record cognitive-labeled claim |
 | `python3 scripts/research_tools.py hyp 有效` | Update hypothesis state (中文) |
-| `python3 scripts/research_tools.py check-stop --effort L2` | 4-C stop gate check |
-| `python3 scripts/research_tools.py audit` | Pre-DELIVER mandatory (8-item self-check #8) |
+| `python3 scripts/research_tools.py check-stop --effort L2` | S1-S7 stop-condition check |
+| `python3 scripts/research_tools.py audit --topic <slug>` | Pre-DELIVER mandatory (fidelity gate, self-check #8) |
 | `python3 scripts/research_tools.py inline --write <file>` | Auto-inject metadata |
-| `python3 scripts/research_tools.py suggest-path "topic"` | Generate `research/<slug>.md` path |
-
-### Test cases
-
-See `tests/gold-cases.md` (14 gold cases) + `tests/regression-log.md` (R1-R17 history).
+| `python3 scripts/research_tools.py suggest-path "topic"` | Generate `research/<slug>-<YYYY-MM>.md` path |
 
 ---
 
-*Last updated: v9.0 refactor*
+*Last updated: 2026-09-23 (synced with SKILL.md v9.0)*

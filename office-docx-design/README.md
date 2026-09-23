@@ -1,8 +1,8 @@
-# document-architect —— 正式工作文档内容架构师
+# office-docx-design —— 正式工作文档内容架构师
 
 > 以读者为中心，把零散材料设计成一份能读懂、能信服、能照做的正式工作文档。方法论 = **一个核心（以读者为中心）+ 三大支柱（结构清晰·内容精准·表达简洁）+ 六项准则（清晰·简洁·准确·完整·一致·礼貌）**，覆盖报告、方案、SOW、制度、汇报、复盘七类文体。
 
-[![version v5.0.0](https://img.shields.io/badge/version-v5.0.0-blue)](./SKILL.md) [![skill: document-architect](https://img.shields.io/badge/skill-document--architect-purple)](./SKILL.md) [![license: Apache--2.0](https://img.shields.io/badge/license-Apache--2.0-green)](../LICENSE) [![repo: 0xn0ne/skills](https://img.shields.io/badge/repo-0xn0ne%2Fskills-lightgrey)](https://github.com/0xn0ne/skills)
+[![version v5.0.0](https://img.shields.io/badge/version-v5.0.0-blue)](./SKILL.md) [![skill: office-docx-design](https://img.shields.io/badge/skill-office--docx--design-purple)](./SKILL.md) [![license: Apache--2.0](https://img.shields.io/badge/license-Apache--2.0-green)](../LICENSE) [![repo: 0xn0ne/skills](https://img.shields.io/badge/repo-0xn0ne%2Fskills-lightgrey)](https://github.com/0xn0ne/skills)
 
 ---
 
@@ -42,7 +42,7 @@
 
 ```bash
 git clone https://github.com/0xn0ne/skills.git
-cp -r skills/document-architect/ <你的 agent 的 skills 目录>/
+cp -r skills/office-docx-design/ <你的 agent 的 skills 目录>/
 ```
 
 常见 agent 的 skills 目录：
@@ -55,7 +55,7 @@ cp -r skills/document-architect/ <你的 agent 的 skills 目录>/
 
 > 不安装也能用：直接在 prompt 里给出 `SKILL.md` 的绝对路径，让 agent 加载即可。
 
-自检（以 Claude Code 用户级为例）：`ls ~/.claude/skills/document-architect/SKILL.md` 应能列出文件。
+自检（以 Claude Code 用户级为例）：`ls ~/.claude/skills/office-docx-design/SKILL.md` 应能列出文件。
 
 加载方式：由 agent 依据 `SKILL.md` frontmatter 的 `description` 自动触发；也可在 prompt 中显式给出绝对路径强制加载。
 
@@ -70,7 +70,7 @@ cp -r skills/document-architect/ <你的 agent 的 skills 目录>/
 背景材料：[粘贴材料，或给出文件路径]
 篇幅与模板：[可选，用户指定时优先遵守]
 
-加载 SKILL（绝对路径）：<你的 skills 目录>/document-architect/SKILL.md
+加载 SKILL（绝对路径）：<你的 skills 目录>/office-docx-design/SKILL.md
 严格按其五步工作流与六项准则执行，只交付文档本体 + 不超过 5 行的交付说明。
 ```
 
@@ -93,11 +93,11 @@ cp -r skills/document-architect/ <你的 agent 的 skills 目录>/
 | --- | --- | --- |
 | 分析 / 研究 / 评估报告 | 客观性、分析深度 | 结论是什么？证据何在？对读者意味着什么？下一步做什么？ |
 | 调研报告 | 用事实和数据说话 | 调研了谁、怎么调的、发现了什么、说明了什么、建议做什么？ |
-| 方案 / 提案 / 规划 | 前瞻性、指导性 | 解决什么问题？怎么做？谁做、何时做？做到什么标准？风险如何应对？ |
+| 方案 / 提案 / 规划 | 前瞻性、指导性 | 解决什么问题？怎么做？谁做、何时做？做到什么标准？需要什么条件？风险如何应对？ |
 | SOW / 工作说明书 | 边界清晰、可验收 | 做什么、不做什么？双方各承担什么？交付什么、怎么验收？ |
 | 制度 / 规范 / 流程 | 权威性、约束力、可执行 | 适用于谁？必须/应当/可以做什么？违反后果？谁解释、何时生效？ |
 | 工作汇报 / 情况说明 | 针对性、时效性 | 目标达成了吗？什么变了、为什么？需要什么决策或支持？ |
-| 总结 / 复盘 | 真实性、可复用 | 原目标是什么？差距在哪？根因是什么？后续改什么、谁负责？ |
+| 总结 / 复盘 | 真实性、可复用 | 原目标是什么？差距在哪？根因是什么？沉淀了什么？后续改什么、谁负责？ |
 
 每类的**完整必答问题集、常见主线、专属规则**见 [`./references/genre-guide.md`](./references/genre-guide.md)；文体不在表中时（如请示、建议书、白皮书）按"最接近的文体 + 读者三问"推断。
 
@@ -173,4 +173,4 @@ cp -r skills/document-architect/ <你的 agent 的 skills 目录>/
 
 本项目采用 [Apache License 2.0](../LICENSE)。仓库：[0xn0ne/skills](https://github.com/0xn0ne/skills)。
 
-*Last updated: 2026-09-09*
+*Last updated: 2026-09-23*
